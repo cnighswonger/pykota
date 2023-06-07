@@ -271,6 +271,17 @@ class Tool :
                     done = 1
         return (parsed, args)
 
+    def removeWinbindSeparator(self, names) :
+        separator = self.config.getWinbindSeparator()
+        if separator is not None :
+            if isinstance(names, list):
+                usernames = []
+                for name in names :
+                    usernames.append(name.split(separator)[-1])
+                return usernames
+            else :
+                return names.split(separator)[-1]
+
 class PyKotaTool(Tool) :
     """Base class for all PyKota command line tools."""
     def deferredInit(self) :

@@ -81,6 +81,8 @@ class PKUsers(PyKotaTool) :
             self.adminOnly()
 
         names = self.sanitizeNames(names, options.groups)
+	#raise PyKotaCommandLineError, _("names is " + str(names))
+
         if not names :
             if isdelete or isadd :
                 raise PyKotaCommandLineError, _("You must specify users or groups names on the command line.")
@@ -111,6 +113,7 @@ class PKUsers(PyKotaTool) :
             percent = Percent(self)
 
         if not isadd :
+	    names = self.removeWinbindSeparator(names)
             if not islist :
                 percent.display("%s..." % _("Extracting datas"))
             entries = getattr(self.storage, "getMatching%ss" % suffix)(",".join(names))
@@ -155,6 +158,7 @@ class PKUsers(PyKotaTool) :
                     self.display("    %s\n" % (_("Total paid so far : %.2f") % (entry.LifeTimePaid or 0)))
                     self.display("\n")
         elif isdelete :
+	    names = self.removeWinbindSeparator(names)
             percent.display("\n%s..." % _("Deletion"))
             getattr(self.storage, "deleteMany%ss" % suffix)(entries)
             percent.display("\n")
@@ -227,6 +231,7 @@ class PKUsers(PyKotaTool) :
                                 else :
                                     try :
                                         pwd.getpwnam(ename)
+	                                ename = self.removeWinbindSeparator(ename)
                                     except KeyError :
                                         self.printInfo(_("Unknown user %s") % ename, "error")
                                         reject = 1
